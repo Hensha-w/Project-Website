@@ -4,12 +4,12 @@ const paymentSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: [true, 'User is required']
     },
     project: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Project',
-        required: true
+        required: [true, 'Project is required']
     },
     accountNumber: {
         type: String,
@@ -24,7 +24,7 @@ const paymentSchema = new mongoose.Schema({
     amount: {
         type: Number,
         required: [true, 'Amount is required'],
-        min: 0
+        min: [0, 'Amount cannot be negative']
     },
     receiptUrl: {
         type: String,
@@ -37,7 +37,8 @@ const paymentSchema = new mongoose.Schema({
     },
     adminPhone: {
         type: String,
-        trim: true
+        trim: true,
+        default: ''
     },
     createdAt: {
         type: Date,
@@ -45,4 +46,6 @@ const paymentSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Payment', paymentSchema);
+const Payment = mongoose.model('Payment', paymentSchema);
+
+module.exports = Payment;

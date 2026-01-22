@@ -4,12 +4,13 @@ const projectSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: [true, 'User is required']
     },
     title: {
         type: String,
         required: [true, 'Project title is required'],
-        trim: true
+        trim: true,
+        maxlength: [200, 'Title cannot exceed 200 characters']
     },
     course: {
         type: String,
@@ -32,19 +33,23 @@ const projectSchema = new mongoose.Schema({
     },
     adminPrice: {
         type: Number,
-        min: 0
+        min: [0, 'Price cannot be negative'],
+        default: null
     },
     adminDescription: {
         type: String,
-        trim: true
+        trim: true,
+        default: ''
     },
     userProposedPrice: {
         type: Number,
-        min: 0
+        min: [0, 'Price cannot be negative'],
+        default: null
     },
     userProposedDescription: {
         type: String,
-        trim: true
+        trim: true,
+        default: ''
     },
     status: {
         type: String,
@@ -53,7 +58,8 @@ const projectSchema = new mongoose.Schema({
     },
     adminPhone: {
         type: String,
-        trim: true
+        trim: true,
+        default: ''
     },
     createdAt: {
         type: Date,
@@ -65,10 +71,18 @@ const projectSchema = new mongoose.Schema({
     }
 });
 
-// Update updatedAt on save
+// Update timestamp before saving
 projectSchema.pre('save', function(next) {
     this.updatedAt = Date.now();
     next();
 });
 
-module.exports = mongoose.model('Project', projectSchema);
+// Update timestamp before findOneAndUpdate
+projectSchema.pre('findOneAndUpdate', function(next) {
+    this.set({ updatedAt: Date.now() });
+    next();
+});
+
+const Project = mongoose.model('Project', projectSchema);
+
+module.exports = Project;
